@@ -58,7 +58,7 @@ def run_circuit(instructions, circuits):
         for index, instruction in enumerate(instructions):
             operator = None
 
-            # We already process this line
+            # We already processed this line
             if not instruction:
                 continue
             # Variable assignation
