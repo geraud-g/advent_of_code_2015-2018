@@ -46,7 +46,7 @@ def process(puzzle=1):
         for y1, row in enumerate(grid):
             for x1, tile in enumerate(row):
                 update_light(grid, new_grid, y1, x1)
-        grid = [row.copy() for row in new_grid]
+        grid = new_grid
         if puzzle == 2:
             light_corners(grid)
 
