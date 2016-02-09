@@ -87,5 +87,6 @@ if __name__ == "__main__":
             won_min_cost = cost
         elif not won and cost > lose_max_cost:
             lose_max_cost = cost
+
     print("Part 1: {}".format(won_min_cost))
     print("Part 2: {}".format(lose_max_cost))
