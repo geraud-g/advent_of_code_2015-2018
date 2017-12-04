@@ -1,51 +1,65 @@
 from itertools import count, product
 
 
-class Coord:
+class Puzzle2:
     directions = ['top', 'left', 'bottom', 'right']
 
     def __init__(self, y, x, grid, data_location):
         self.data_location = data_location
         self.map = grid
-        self.counter = 2
         self.y = y
         self.x = x
         self.direction = 'top'
+        self.ring_level = 1
 
     def set_next_direction(self):
         direction_index = self.directions.index(self.direction)
         self.direction = self.directions[(direction_index + 1) % 4]
         if self.direction == 'top':
             self.x += 1
-            self.counter += 1
             self.set_case()
 
     def set_next_coord(self):
-        next_move = (
+        next_moves = (
             (-1, 0),
             (0, -1),
             (1, 0),
             (0, 1)
         )
         direction_index = self.directions.index(self.direction)
-        move_y, move_x = next_move[direction_index]
+        move_y, move_x = next_moves[direction_index]
         self.y += move_y
         self.x += move_x
-        self.counter += 1
         self.set_case()
 
     def set_case(self):
         sum_of_adjacent_squares = 0
+        # Get a list of the 8 directions around the current position.
+        # The current position is also given, but since his value is 0 it's not a problem.
         for dir_y, dir_x in product([1, 0, -1], repeat=2):
-            sum_of_adjacent_squares += self.map[self.y + dir_y][self.x + dir_x]
+            adjacent_square = self.map[self.y + dir_y][self.x + dir_x]
+            sum_of_adjacent_squares += adjacent_square
 
         if sum_of_adjacent_squares > self.data_location:
             print(f"Puzzle 2: {sum_of_adjacent_squares}")
             exit()
         self.map[self.y][self.x] = sum_of_adjacent_squares
 
-    def __str__(self):
-        return f'({self.y}, {self.x}) {self.direction}'
+    def loop(self):
+        side = 3
+        while True:
+            lower = (side - 2) ** 2
+            upper = side ** 2
+            i = self.ring_level
+
+            for val in range(lower + 1, upper + 1):
+                if i % (side - 1) == 0:
+                    self.set_next_direction()
+                self.set_next_coord()
+                i += 1
+
+            side += 2
+            self.ring_level += 1
 
 
 def get_square_level_and_side_len(data: int) -> (int, int):
@@ -69,27 +83,13 @@ def puzzle_1(data_location: int) -> int:
     return square_level + alignment
 
 
-def puzzle_2(data_location: int) -> int:
+def puzzle_2(data_location: int):
     grid = [[0] * 20 for _ in range(20)]
     grid[10][10] = 1
     grid[10][11] = 1
-    coord = Coord(10, 11, grid, data_location)
+    coord = Puzzle2(10, 11, grid, data_location)
 
-    side = 3
-    step = 1
-    while True:
-        lower = (side - 2) ** 2
-        upper = side ** 2
-        i = step
-
-        for val in range(lower + 1, upper + 1):
-            if i % (side - 1) == 0:
-                coord.set_next_direction()
-            coord.set_next_coord()
-            i += 1
-
-        side += 2
-        step += 1
+    coord.loop()
 
 
 if __name__ == "__main__":
