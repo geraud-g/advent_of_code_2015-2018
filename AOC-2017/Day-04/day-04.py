@@ -5,13 +5,13 @@ def get_input() -> [[str]]:
 
 
 def has_unique_passwords(line: str) -> bool:
-    splitted_line = line.split()
-    return len(splitted_line) == len(set(splitted_line))
+    split_line = line.split()
+    return len(split_line) == len(set(split_line))
 
 
 def has_no_anagram(line: str) -> bool:
-    sorted_splitted_line = [''.join(sorted(password)) for password in line.split()]
-    return len(sorted_splitted_line) == len(set(sorted_splitted_line))
+    sorted_split_line = [''.join(sorted(password)) for password in line.split()]
+    return len(sorted_split_line) == len(set(sorted_split_line))
 
 
 if __name__ == "__main__":
