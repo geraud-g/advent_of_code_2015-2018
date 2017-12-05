@@ -3,7 +3,7 @@ def get_input() -> [int]:
         return [int(x) for x in f.readlines()]
 
 
-def puzzle_part_1(jumps: [int], part: int=1) -> int:
+def make_jumps(jumps: [int], part: int=1) -> int:
     offset = 0
     steps = 0
 
@@ -13,14 +13,19 @@ def puzzle_part_1(jumps: [int], part: int=1) -> int:
             offset = offset + jumps[offset]
             steps += 1
 
-            if part == 1:
+            if part == 1 or jumps[last_offset] < 3:
                 jumps[last_offset] += 1
+            else:
+                jumps[last_offset] -= 1
         except IndexError:
             return steps
 
 
 if __name__ == "__main__":
     jumps = get_input()
-
-    result_1 = puzzle_part_1(jumps, part=1)
+    result_1 = make_jumps(jumps, part=1)
     print(f"Puzzle 1: {result_1}")
+
+    jumps = get_input()
+    result_2 = make_jumps(jumps, part=2)
+    print(f"Puzzle 2: {result_2}")
