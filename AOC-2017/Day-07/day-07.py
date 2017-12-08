@@ -20,42 +20,34 @@ def get_input() -> {}:
                 children = children.split(', ')
                 if children == ['']:
                     children = []
-                puzzle_input[name] = (int(weight), children)
+                puzzle_input[name] = Node(name, int(weight))
+                for x in children:
+                    puzzle_input[name].children[x] = None
     return puzzle_input
 
 
-def populate_children(tower: {}, node: Node, children: {}):
-    for child_name in children:
-        value = tower[child_name]
-
-        if value is None:
-            continue
-        weight, child_children = value
-        new_node = Node(child_name, weight)
-        tower[child_name] = None
-
-        populate_children(tower, new_node, child_children)
-        node.children[child_name] = new_node
-
-
 def build_tree(tower: {}):
-    assigned = []
-    for name, value in tower.items():
-        if value is None:
-            continue
-        weight, children = value
-        new_node = Node(name, weight)
-        populate_children(tower, new_node, children)
-        assigned.append(new_node)
+    for name, node in tower.items():
+        for child in node.children:
+            if node.children[child] is None:
+                node.children[child] = tower[child]
 
-    root_name = [name for name, node in tower.items() if node is not None][0]
-
-    root = list(filter(lambda x: x.name == root_name, assigned))[0]
+    for name, node in tower.items():
+        if all(name not in val.children for k, val in tower.items()):
+            root = tower[name]
     return root
+
+
+def get_tree_total_weight(tree):
+    total = tree.weight
+    for child in tree.children:
+        total += get_tree_total_weight(tree.children[child])
+    return total
 
 
 if __name__ == "__main__":
     tower = get_input()
-
     tree = build_tree(tower)
+
     print(f"Puzzle 1: {tree.name}")
+
