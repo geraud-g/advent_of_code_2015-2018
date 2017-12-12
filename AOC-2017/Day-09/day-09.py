@@ -7,7 +7,7 @@ def get_input() -> str:
     return re.sub(r'!.', '', line)
 
 
-def puzzle_one(stream: str) -> (int, int):
+def solve_puzzle(stream: str) -> (int, int):
     score = 0
     depth = 0
     garbage_total_len = 0
@@ -31,6 +31,6 @@ def puzzle_one(stream: str) -> (int, int):
 
 if __name__ == "__main__":
     puzzle_input = get_input()
-    solution_1, solution_2 = puzzle_one(puzzle_input)
+    solution_1, solution_2 = solve_puzzle(puzzle_input)
     print(f'Part 1: {solution_1}')
     print(f'Part 2: {solution_2}')

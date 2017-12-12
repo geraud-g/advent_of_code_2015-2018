@@ -38,11 +38,27 @@ def build_tree(tower: {}):
     return root
 
 
-def get_tree_total_weight(tree):
+def get_right_weight(tree: Node) -> (bool, int):
     total = tree.weight
+    children_weight = []
+
     for child in tree.children:
-        total += get_tree_total_weight(tree.children[child])
-    return total
+        found, weight = get_right_weight(tree.children[child])
+        if found:
+            return True, weight
+        children_weight.append(weight)
+
+    if len(set(children_weight)) > 1:
+        bad_weight_index, bad_weight = [(i, x) for i, x in enumerate(children_weight) if children_weight.count(x) == 1][0]
+        good_weight = [x for x in children_weight if children_weight.count(x) > 1][0]
+        bad_node_key = [x for x in tree.children][bad_weight_index]
+        bad_node = tree.children[bad_node_key]
+        print(f'Good weight: {good_weight}')
+        print(f'Bad weight: {bad_weight}')
+        print(f'Bad Node Weight and Name: {bad_node.weight}, {bad_node.name}')
+        return True, ((good_weight - bad_weight) + bad_node.weight)
+
+    return False, total + sum(children_weight)
 
 
 if __name__ == "__main__":
@@ -51,3 +67,5 @@ if __name__ == "__main__":
 
     print(f"Puzzle 1: {tree.name}")
 
+    _, puzzle_2 = get_right_weight(tree)
+    print(f"Puzzle 2: {puzzle_2}")
