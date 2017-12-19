@@ -2,7 +2,6 @@ UP = 'up'
 DOWN = 'down'
 LEFT = 'left'
 RIGHT = 'right'
-
 EMPTY = ' '
 
 
@@ -17,7 +16,7 @@ def find_start_coord(maze) -> (int, int):
             return 0, index
 
 
-def get_cross_next_tile(maze, y, x, direction):
+def get_new_direction(maze: [str], y: int, x: int, direction: str) -> str:
     try:
         left = maze[y][x - 1]
     except IndexError:
@@ -27,63 +26,43 @@ def get_cross_next_tile(maze, y, x, direction):
     except IndexError:
         up = ' '
     if direction in (DOWN, UP):
-        if left != ' ':
-            return y, x - 1, LEFT
-        else:
-            return y, x + 1, RIGHT
+        return LEFT if left != EMPTY else RIGHT
     else:
-        if up != ' ':
-            return y -1, x, UP
-        else:
-            return y + 1, x, DOWN
+        return UP if up != EMPTY else DOWN
 
 
-def get_next_tile(maze, y, x, direction):
-    current_tile = maze[y][x]
-
-    if current_tile in ['|', '-']:
-        if direction == DOWN:
-            return y + 1, x, direction
-        elif direction == UP:
-            return y - 1, x, direction
-        if direction == RIGHT:
-            return y, x + 1, direction
-        else:
-            return y, x - 1, direction
-    elif current_tile == '+':
-        return get_cross_next_tile(maze, y, x, direction)
-    else:
-        if direction == UP:
-            return y-1, x, direction
-        elif direction == DOWN:
-            return y+1, x, direction
-        elif direction == RIGHT:
-            return y, x+1, direction
-        else:
-            return y, x-1, direction
+def get_next_tile(maze: [str], y: int, x: int, direction: str) -> (int, int, str):
+    if maze[y][x] == '+':
+        direction = get_new_direction(maze, y, x, direction)
+    return {
+        UP: (y - 1, x, direction),
+        DOWN: (y + 1, x, direction),
+        LEFT: (y, x - 1, direction),
+        RIGHT: (y, x + 1, direction)
+    }[direction]
 
 
-def solve_puzzle(maze: [str]):
+def solve_puzzle(maze: [str]) -> (str, int):
     y, x = find_start_coord(maze)
     letters_encountered = []
     current_tile = None
     direction = DOWN
     counter = 0
+
     while current_tile != EMPTY:
         try:
             current_tile = maze[y][x]
             if current_tile.isalpha():
                 letters_encountered.append(current_tile)
-            new_y, new_x, new_direction = get_next_tile(maze, y, x, direction)
-            y, x, direction = new_y, new_x, new_direction
+            y, x, direction = get_next_tile(maze, y, x, direction)
             counter += 1
         except IndexError:
             break
-    print(''.join(letters_encountered) == 'KGPTMEJVS')
-    print(counter == 16328)
+    return ''.join(letters_encountered), counter
 
 
 if __name__ == "__main__":
     puzzle_input = get_input()
-    solution_1 = solve_puzzle(puzzle_input)
-    print(f'Part 1: {solution_1}')
+    letters, steps = solve_puzzle(puzzle_input)
+    print(f'Part 1: {letters}')
+    print(f'Part 2: {steps}')
